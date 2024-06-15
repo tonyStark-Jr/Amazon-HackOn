@@ -1,0 +1,21 @@
+{
+    "status": "ready",
+    "originalFilePath": "videos\\file_example_MP4_1280_10MG.mp4",
+    "provider": "vercel-blob",
+    "providerMetadata": {
+        "vercel-blob": {
+            "key": "videos/videos\\file_example_MP4_1280_10MG.mp4",
+            "url": "https://dt7dtd4k67apw38c.public.blob.vercel-storage.com/videos/videos/file_example_MP4_1280_10MG-zGq11jYxpWf4UvRFBnGXG0hXj6ry9X.mp4",
+            "contentType": "video/mp4"
+        }
+    },
+    "createdAt": 1718446394632,
+    "updatedAt": 1718446402400,
+    "size": 9840497,
+    "sources": [
+        {
+            "src": "https://dt7dtd4k67apw38c.public.blob.vercel-storage.com/videos/videos/file_example_MP4_1280_10MG-zGq11jYxpWf4UvRFBnGXG0hXj6ry9X.mp4",
+            "type": "video/mp4"
+        }
+    ]
+}
