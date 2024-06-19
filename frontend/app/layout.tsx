@@ -4,6 +4,8 @@ import './globals.css';
 import { ViewTransitions } from 'next-view-transitions';
 import NextTopLoader from 'nextjs-toploader';
 
+import { NextUIProvider } from '@nextui-org/react';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -20,7 +22,9 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <NextTopLoader showSpinner={false} color='#7c3aed' />
-        <ViewTransitions>{children}</ViewTransitions>
+        <NextUIProvider>
+          <ViewTransitions>{children}</ViewTransitions>
+        </NextUIProvider>
       </body>
     </html>
   );
