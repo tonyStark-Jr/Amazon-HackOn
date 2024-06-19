@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-7;
-import video from '@/videos/file_example_MP4_1280_10MG.mp4';
+import video from '@/videos/369-136082525_tiny.mp4.json';
 import io, { Socket } from 'socket.io-client';
-import { ScrollShadow, Card, CardHeader, CardBody, Image } from '@nextui-org/react';
+import { ScrollShadow, Card, CardHeader, CardBody, Image, Link } from '@nextui-org/react';
+import items from '@/data/items.json';
 
 interface ClientToServerEvents {
   send_data: (data: { data: string }) => void;
@@ -13,10 +13,11 @@ interface ClientToServerEvents {
 export default function StreamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const socket = useRef<Socket<ClientToServerEvents> | null>(null);
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const frameSend = () => {
-    setShowSidebar(true);
+    setIsVisible(true);
     const video = videoRef.current;
     if (video) {
       const canvas = document.createElement('canvas');
@@ -27,7 +28,7 @@ export default function StreamPage() {
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const frame = canvas.toDataURL('image/jpeg');
-        socket.current?.emit('send_data', { data: frame });
+        // socket.current?.emit('send_data', { data: frame });
       }
     }
   };
@@ -49,90 +50,49 @@ export default function StreamPage() {
   }, []);
 
   return (
-    <main className='flex flex-row min-h-screen items-center justify-between p-5 space-x-4'>
+    <main className='flex w-full h-svh items-center justify-center'>
       {video.sources && (
-        <div className={`${showSidebar ? 'w-4/5' : 'w-full'}`}>
+        <div className='w-11/12' style={{ height: '95%' }}>
           <video
             crossOrigin='anonymous'
             controls
             ref={videoRef}
             onPause={frameSend}
-            onPlay={() => {
-              setShowSidebar(false);
-            }}
-            className='w-full'
+            className='w-full h-full object-cover'
           >
             <source src={video.sources[0].src} type={video.sources[0].type} />
           </video>
         </div>
       )}
-      {showSidebar && (
-        <ScrollShadow className='w-1/5 h-[700px]' hideScrollBar>
-          <div className='flex flex-col space-y-4'>
-            {/* json list objects will be appended here */}
-            {/* temp cards */}
-            <Card className='py-4'>
-              <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
-                <p className='text-tiny uppercase font-bold'>Daily Mix</p>
-                <small className='text-default-500'>12 Tracks</small>
-                <h4 className='font-bold text-large'>Frontend Radio</h4>
-              </CardHeader>
-              <CardBody className='overflow-visible py-2'>
-                <Image
-                  alt='Card background'
-                  className='object-cover rounded-xl'
-                  src='https://nextui.org/images/hero-card-complete.jpeg'
-                  width={270}
-                />
-              </CardBody>
-            </Card>
-            <Card className='py-4'>
-              <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
-                <p className='text-tiny uppercase font-bold'>Daily Mix</p>
-                <small className='text-default-500'>12 Tracks</small>
-                <h4 className='font-bold text-large'>Frontend Radio</h4>
-              </CardHeader>
-              <CardBody className='overflow-visible py-2'>
-                <Image
-                  alt='Card background'
-                  className='object-cover rounded-xl'
-                  src='https://nextui.org/images/hero-card-complete.jpeg'
-                  width={270}
-                />
-              </CardBody>
-            </Card>
-            <Card className='py-4'>
-              <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
-                <p className='text-tiny uppercase font-bold'>Daily Mix</p>
-                <small className='text-default-500'>12 Tracks</small>
-                <h4 className='font-bold text-large'>Frontend Radio</h4>
-              </CardHeader>
-              <CardBody className='overflow-visible py-2'>
-                <Image
-                  alt='Card background'
-                  className='object-cover rounded-xl'
-                  src='https://nextui.org/images/hero-card-complete.jpeg'
-                  width={270}
-                />
-              </CardBody>
-            </Card>
-            <Card className='py-4'>
-              <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
-                <p className='text-tiny uppercase font-bold'>Daily Mix</p>
-                <small className='text-default-500'>12 Tracks</small>
-                <h4 className='font-bold text-large'>Frontend Radio</h4>
-              </CardHeader>
-              <CardBody className='overflow-visible py-2'>
-                <Image
-                  alt='Card background'
-                  className='object-cover rounded-xl'
-                  src='https://nextui.org/images/hero-card-complete.jpeg'
-                  width={270}
-                />
-              </CardBody>
-            </Card>
-          </div>
-        </ScrollShadow>
+      {isVisible && (
+        <div
+          id='overlay'
+          className='fixed inset-0 flex justify-end px-10 py-6 bg-black bg-opacity-60 z-2147483647;'
+          onClick={() => setIsVisible(false)}
+        >
+          <ScrollShadow className='w-1/5 h-[700px]' hideScrollBar>
+            {items &&
+              items.map((item, index) => (
+                <Link key={index} href={item.purchase_link} className='py-2 width-full'>
+                  <a className='block' target='_blank' rel='noopener noreferrer'>
+                    <Card className='py-2'>
+                      <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
+                        <h4 className='font-bold text-large'>{item.name}</h4>
+                      </CardHeader>
+                      <CardBody className='overflow-visible py-2'>
+                        <Image
+                          alt='Card background'
+                          className='object-cover rounded-xl'
+                          src={item.image_link}
+                          width={270}
+                        />
+                      </CardBody>
+                    </Card>
+                  </a>
+                </Link>
+              ))}
+          </ScrollShadow>
+        </div>
       )}
     </main>
   );
