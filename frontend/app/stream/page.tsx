@@ -1,78 +1,45 @@
+'use client';
+
 import VideoPlayer from '@/components/VideoPlayer';
-import { list } from '@vercel/blob';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { useSearchParams } from 'next/navigation';
 
-export default async function StreamPage() {
-  const {
-    blobs: rootBlobs,
-  } = await list({ mode: 'folded' });
-
-  const { blobs } = await list({ mode: 'expanded', prefix: 'videos/videos' });
+export default function StreamPage() {
+  const searchParams = useSearchParams();
+  const url = searchParams.get('url');
+  const pathname = searchParams.get('pathname');
+  const size = searchParams.get('size');
+  const uploadedAt = searchParams.get('uploadedAt');
 
   return (
-    <>
+    <div className='flex align-middle flex-col'>
       <VideoPlayer />
-      <center>
-        <h1>Your Uploads</h1>
-      </center>
-      <ul>
-        {rootBlobs.map(({ pathname, url, size, uploadedAt }) => {
-          return (
-            <li key={pathname}>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>File Name</td>
-                    <td>{pathname}</td>
-                  </tr>
-                  <tr>
-                    <td>Size</td>
-                    <td>{size}</td>
-                  </tr>
-                  <tr>
-                    <td>Uploaded At</td>
-                    <td>{uploadedAt.toLocaleString()}</td>
-                  </tr>
-                  <tr>
-                    <td>URL</td>
-                    <td>{url}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </li>
-          );
-        })}
-      </ul>
-      <center>
-        <h1> Video Contents</h1>
-      </center>
-      <ul>
-        {blobs.map(({ pathname, url, size, uploadedAt }) => {
-          return (
-            <li key={pathname}>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>File Name</td>
-                    <td>{pathname}</td>
-                  </tr>
-                  <tr>
-                    <td>Size</td>
-                    <td>{size}</td>
-                  </tr>
-                  <tr>
-                    <td>Uploaded At</td>
-                    <td>{uploadedAt.toLocaleString()}</td>
-                  </tr>
-                  <tr>
-                    <td>URL</td>
-                    <td>{url}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </li>
-          );
-        })}
-      </ul>
-    </>
+      <div className='mt-4 ml-10 w-11/12 justify-center mb-4'>
+        <Table aria-label='Example static collection table'>
+          <TableHeader>
+            <TableColumn>VIDEO DETAILS</TableColumn>
+            <TableColumn> </TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow key='1'>
+              <TableCell>PATHNAME</TableCell>
+              <TableCell>{pathname}</TableCell>
+            </TableRow>
+            <TableRow key='2'>
+              <TableCell>URL</TableCell>
+              <TableCell>{url}</TableCell>
+            </TableRow>
+            <TableRow key='3'>
+              <TableCell>SIZE</TableCell>
+              <TableCell>{size}</TableCell>
+            </TableRow>
+            <TableRow key='4'>
+              <TableCell>UPLOADED AT</TableCell>
+              <TableCell>{uploadedAt}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 }

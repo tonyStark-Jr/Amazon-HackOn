@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import { ViewTransitions } from 'next-view-transitions';
 import NextTopLoader from 'nextjs-toploader';
-
 import { NextUIProvider } from '@nextui-org/react';
 
-const inter = Inter({ subsets: ['latin'] });
+const poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Amazon Hackon',
@@ -20,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={inter.className}>
+      <body className={poppins.className}>
         <NextTopLoader showSpinner={false} color='#7c3aed' />
         <NextUIProvider>
           <ViewTransitions>{children}</ViewTransitions>
