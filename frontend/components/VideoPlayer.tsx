@@ -68,6 +68,7 @@ export default function VideoPlayer() {
         setIsPlaying(true);
       } else {
         video.pause();
+        frameSend();
         setIsPlaying(false);
       }
     }

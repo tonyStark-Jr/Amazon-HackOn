@@ -3,7 +3,6 @@ import Card from '../components/CardComponent';
 import { Button } from '@nextui-org/react';
 import { UploadCloudIcon } from 'lucide-react';
 
-
 export default function Home() {
   return (
     <div
@@ -20,7 +19,7 @@ export default function Home() {
           </Link>
           <div className='flex flex-row space-x-4 text-lg'>
             <Button as={'a'} href='/upload' variant='light' className='text-slate-200'>
-                Upload <UploadCloudIcon size={24} />
+              Upload <UploadCloudIcon size={24} />
             </Button>
           </div>
         </header>

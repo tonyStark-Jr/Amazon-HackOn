@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardFooter, Image, Skeleton } from '@nextui-org/react';
+import { Card, CardFooter, Image } from '@nextui-org/react';
 import { list } from '@vercel/blob';
 import Link from 'next/link';
 import { Play } from 'lucide-react';

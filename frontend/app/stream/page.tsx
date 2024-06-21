@@ -8,8 +8,8 @@ export default function StreamPage() {
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
   const pathname = searchParams.get('pathname');
-  const size = searchParams.get('size');
-  const uploadedAt = searchParams.get('uploadedAt');
+  const size = searchParams?.get('size');
+  const uploadedAt = searchParams?.get('uploadedAt');
 
   return (
     <div className='flex align-middle flex-col'>

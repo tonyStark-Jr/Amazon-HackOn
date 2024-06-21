@@ -1,42 +1,48 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@nextui-org/react';
-import { type PutBlobResult } from '@vercel/blob';
-import { upload } from '@vercel/blob/client';
+import { Upload, message } from 'antd';
 import { UploadCloudIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useRef } from 'react';
+import { upload } from '@vercel/blob/client';
+import type { UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
+import type { PutBlobResult } from '@vercel/blob';
 
 export default function AvatarUploadPage() {
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const [blob, setBlob] = useState<PutBlobResult | null>(null);
-  const [fileName, setFileName] = useState('');
 
-  const handleFileChange = () => {
-    if (inputFileRef.current?.files && inputFileRef.current.files.length > 0) {
-      setFileName(inputFileRef.current.files[0].name);
-    } else {
-      setFileName('');
+  const handleFileChange = async (info: UploadChangeParam<UploadFile>) => {
+    const { file } = info;
+
+    if (file.status === 'done') {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj as File);
+      }
+
+      try {
+        const newBlob = await upload(file.name, file.originFileObj as File, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+          multipart: true,
+          contentType: file.type,
+        });
+        setBlob(newBlob);
+        message.success('File uploaded successfully');
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        message.error('Failed to upload file');
+      }
     }
   };
 
-  const handleUpload = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!inputFileRef.current?.files) {
-      throw new Error('No file selected');
-    }
-
-    const file = inputFileRef.current.files[0];
-
-    const newBlob = await upload(file.name, file, {
-      access: 'public',
-      handleUploadUrl: '/api/upload',
-      multipart: true,
-      contentType: file.type,
+  const getBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
     });
-    setBlob(newBlob);
-  };
 
   return (
     <div
@@ -47,12 +53,12 @@ export default function AvatarUploadPage() {
       }}
     >
       <div className='bg-gradient-to-r from-black via-slate-900 bg-opacity-50 w-full h-full'>
-        <header className='flex flex-row justify-between items-center z-10 h-12 w-full bg-cyan-600 px-64'>
-          <Link href='/' className='text-slate-50 text-2xl'>
+        <header className='flex justify-between items-center z-10 h-12 w-full bg-cyan-600 px-64'>
+          <Link href='/' className='text-white text-2xl'>
             prime video
           </Link>
-          <div className='flex flex-row space-x-4 text-lg'>
-            <Button as={'a'} href='/upload' variant='light' className='text-slate-200'>
+          <div className='flex space-x-4'>
+            <Button as='a' href='/upload' variant='light' style={{ color: 'white' }}>
               Upload <UploadCloudIcon size={24} />
             </Button>
           </div>
@@ -75,37 +81,33 @@ export default function AvatarUploadPage() {
             </p>
           </div>
           <div>
-            <form onSubmit={handleUpload} className='flex flex-col w-1/5'>
-              <label
-                htmlFor='file-upload'
-                className='relative cursor-pointer bg-gray-900 py-2 px-4 rounded-lg border border-gray-300'
-              >
-                <span className='text-lg'>Choose a file</span>
-                <input
-                  id='file-upload'
-                  name='file'
-                  ref={inputFileRef}
-                  type='file'
-                  className='hidden'
-                  required
-                  onChange={handleFileChange}
-                />
-              </label>
-              {fileName && <p className='mt-2 text-lg text-gray-400'>{fileName}</p>}
-              <Button
-                className='mt-4 bg-cyan-600 text-white rounded-lg py-2 px-4 hover:bg-cyan-700'
-                size='lg'
-                type='submit'
-              >
-                Upload <UploadCloudIcon size={24} />
-              </Button>
-            </form>
+            <Upload
+              className='text-white flex flex-col'
+              listType='picture-card'
+              onChange={handleFileChange}
+              showUploadList={{ showPreviewIcon: false, showRemoveIcon: false }}
+            >
+              <div className='flex flex-col justify-center'>
+                <UploadCloudIcon />
+                <div className='text-sm'>
+                  Click or drag
+                  <br /> file to upload
+                </div>
+              </div>
+            </Upload>
             {blob && (
               <div className='mt-4'>
-                Blob URL:{' '}
-                <a href={blob.url} className='text-blue-600'>
-                  {blob.url}
-                </a>
+                <Link
+                  href={{
+                    pathname: '/stream',
+                    query: {
+                      url: blob.url,
+                      pathname: blob.pathname,
+                    },
+                  }}
+                >
+                  <Button className='w-[12%] h-12 bg-cyan-600'>Watch Now</Button>
+                </Link>
               </div>
             )}
           </div>

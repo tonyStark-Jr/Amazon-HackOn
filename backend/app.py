@@ -13,58 +13,56 @@ product_types = json.load(open("static/product_type_map.json"))
 app = Flask(__name__)
 CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
 model = YOLO("yolov8n.pt")
 
-
 @app.route("/")
 def hello_world() -> str:
     return "Hello, World!"
-
 
 @socketio.on("connect")
 def handle_connect():
     print("Client connected")
     emit("message", {"data": "Connected to the server"})
 
-
 @socketio.on("disconnect")
 def handle_disconnect():
     print("Client disconnected")
 
-
 @socketio.on("send_data")
 def handle_send_data(data):
     print(f"Received data from client")
+    
     image_data = data["data"].split(",")[1]
     decoded_data = base64.b64decode(image_data)
 
     nparr = np.frombuffer(decoded_data, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
     img = cv2.resize(img, (640, 480))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
     img = torch.from_numpy(img).permute(2, 0, 1).float().div(255.0).unsqueeze(0)
-    # results = model.predict(img)
-    results = model("static/test1.jpg")
-    results[0].show()
-    results: list = results[0].summary()
-    results: list[str] = set(
+
+    results = model("static/test1.jpg")  # You might want to change this to use img
+    
+    result_set = set(
         [result["name"] for result in results if result["confidence"] > 0.55]
     )
+    
     results = [
         {
             "name": result,
-            "link": product_types.get(
-                result, f"https://www.amazon.in/s?k={result}"
-            ),
+            "link": product_types.get(result, f"https://www.amazon.in/s?k={result}"),
         }
-        for result in results
+        for result in result_set
     ]
     print(results)
+    
     emit("data_processed", results)
 
-
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)
