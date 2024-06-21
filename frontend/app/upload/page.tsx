@@ -1,8 +1,9 @@
 'use client';
 
-import { Button, Image } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { type PutBlobResult } from '@vercel/blob';
 import { upload } from '@vercel/blob/client';
+import { UploadCloudIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
 
@@ -51,12 +52,9 @@ export default function AvatarUploadPage() {
             prime video
           </Link>
           <div className='flex flex-row space-x-4 text-lg'>
-            <Link href='/stream' className='text-slate-200'>
-              Stream
-            </Link>
-            <Link href='/upload' className='text-slate-200'>
-              Upload
-            </Link>
+            <Button as={'a'} href='/upload' variant='light' className='text-slate-200'>
+              Upload <UploadCloudIcon size={24} />
+            </Button>
           </div>
         </header>
         <main className='relative p-12 flex flex-col justify-between h-4/5 z-10'>
@@ -99,7 +97,7 @@ export default function AvatarUploadPage() {
                 size='lg'
                 type='submit'
               >
-                Upload
+                Upload <UploadCloudIcon size={24} />
               </Button>
             </form>
             {blob && (

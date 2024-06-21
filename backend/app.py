@@ -5,13 +5,19 @@ import base64
 import numpy as np
 import cv2
 import torch
+from ultralytics import YOLO
+import json
+
+product_types = json.load(open("static/product_type_map.json"))
 
 app = Flask(__name__)
 CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+# model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+model = YOLO("yolov8n.pt")
+
 
 @app.route("/")
 def hello_world() -> str:
@@ -40,29 +46,25 @@ def handle_send_data(data):
     img = cv2.resize(img, (640, 480))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = torch.from_numpy(img).permute(2, 0, 1).float().div(255.0).unsqueeze(0)
-
-    results = model(img)
+    # results = model.predict(img)
+    results = model("static/test1.jpg")
+    results[0].show()
+    results: list = results[0].summary()
+    results: list[str] = set(
+        [result["name"] for result in results if result["confidence"] > 0.55]
+    )
+    results = [
+        {
+            "name": result,
+            "link": product_types.get(
+                result, f"https://www.amazon.in/s?k={result}"
+            ),
+        }
+        for result in results
+    ]
     print(results)
-    # Get all attributes of the results object
-    attributes = dir(results)
-
-    # Filter out special attributes (those starting with '__')
-    attributes = [attr for attr in attributes if not attr.startswith('__')]
-
-    # Print all attribute names
-    for attr in attributes:
-        print(attr)
-
-    # Save the image to the server
-    # try:
-    #     filename = f"static/image_{int(time.time())}.png"
-    #     with open(filename, "wb") as file:
-    #         file.write(decoded_data)
-    #     print("Image saved")
-
-    # except Exception as err:
-    #     print(err)
+    emit("data_processed", results)
 
 
 if __name__ == "__main__":
-    socketio.run(app,debug=True)
+    socketio.run(app, debug=True)

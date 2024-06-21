@@ -1,40 +1,53 @@
 import React from 'react';
-import { Card, CardFooter, Image } from '@nextui-org/react';
+import { Card, CardFooter, Image, Skeleton } from '@nextui-org/react';
 import { list } from '@vercel/blob';
 import Link from 'next/link';
+import { Play } from 'lucide-react';
 
 export default async function CardComponent() {
   const { blobs } = await list({ mode: 'expanded', prefix: 'videos' });
 
   return (
-    <div className='flex flex-wrap gap-6'>
+    <div className='flex flex-wrap gap-8'>
       {blobs &&
-        blobs.map(({ pathname, url, size, uploadedAt}) => (
-          <Card key={pathname} isFooterBlurred radius='lg' className='border-none w-52 h-52 flex justify-center'>
-            <Image
-              alt={pathname}
-              className='object-cover'
-              height={250}
-              src='https://nextui.org/images/hero-card.jpeg'
-              width={250}
-            />
-
-            <CardFooter className='justify-center bg-cyan-600 ml-1 overflow-hidden absolute rounded-xl bottom-1 h-10  w-[calc(100%_-_8px)] z-10 cursor-pointer'>
-              <Link
-                href={{
-                  pathname: '/stream',
-                  query: {
-                    url: url,
-                    pathname: pathname,
-                    size: size,
-                    uploadedAt: uploadedAt.toISOString(),
-                  },
-                }}
-              >
-                <p className='text-tiny text-white'>Watch Now</p>
-              </Link>
-            </CardFooter>
-          </Card>
+        blobs.map(({ pathname, url, size, uploadedAt }) => (
+          <Link
+            href={{
+              pathname: '/stream',
+              query: {
+                url: url,
+                pathname: pathname,
+                size: size,
+                uploadedAt: uploadedAt.toLocaleString(),
+              },
+            }}
+            key={pathname}
+          >
+            <Card
+              key={pathname}
+              isHoverable
+              isPressable
+              radius='lg'
+              className='border-none w-52 justify-center bg-cyan-600 hover:scale-110'
+            >
+              <div className='relative'>
+                <Image
+                  loading='lazy'
+                  alt={pathname}
+                  className='object-cover'
+                  height={250}
+                  src='https://nextui.org/images/hero-card.jpeg'
+                  width={250}
+                />
+                <div className='absolute inset-0 flex z-10 items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity'>
+                  <Play size={48} color='white' />
+                </div>
+              </div>
+              <CardFooter className='justify-between'>
+                <p className='text-small text-white text-wrap'>{pathname.split('/').pop()?.split('.')[0]}</p>
+              </CardFooter>
+            </Card>
+          </Link>
         ))}
     </div>
   );

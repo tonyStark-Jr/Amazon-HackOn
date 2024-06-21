@@ -7,9 +7,8 @@ export default withNextVideo(nextConfig, {
   providerConfig: {
     'vercel-blob': {
       generateAssetKey(filePath, folder) {
-        return folder + '/' + filePath;
+        return filePath;
       },
-      
     },
   },
   folder: 'videos',

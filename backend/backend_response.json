@@ -1,0 +1,22 @@
+[
+    {
+        "name": "person",
+        "link": "https: //www.amazon.in/s?k=person"
+    },
+    {
+        "name": "chair",
+        "link": [
+            "https://www.amazon.com/dp/B07TMH6289",
+            "https://www.amazon.com/dp/B07F2X8K62",
+            "https://www.amazon.de/dp/B075NR8HWJ"
+        ]
+    },
+    {
+        "name": "tv",
+        "link": "https://www.amazon.in/s?k=tv"
+    },
+    {
+        "name": "laptop",
+        "link": "https://www.amazon.in/s?k=laptop"
+    }
+]

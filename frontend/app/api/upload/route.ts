@@ -12,6 +12,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         // Get notified before generating a token for authenicated uploads
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'video/mp4'],
+          addRandomSuffix: false,
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
