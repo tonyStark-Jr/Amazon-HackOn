@@ -56,6 +56,18 @@ Our approach involves creating a diverse and robust dataset by integrating real-
 - **Object Detection (YOLO with Meta Learning)**: Leverages YOLO for real-time object detection, enhanced by meta learning to continuously improve accuracy and adapt to new items.
 - **Cloud Infrastructure (AWS)**: Deploys AWS services for scalable computing, storage, and machine learning, ensuring efficient data management and high availability.
 
+## Prototype Images
+
+![Alt text](readme_images/Screenshot%20(628).png?raw=true)
+![Alt text](readme_images/Screenshot%20(633).png?raw=true)
+![Alt text](readme_images/Screenshot%20(632).png?raw=true)
+![Alt text](readme_images/3.jpeg?raw=true)
+
+## Model Output Images
+
+![Alt text](readme_images/4.jpeg?raw=true)
+![Alt text](readme_images/5.jpeg?raw=true)
+
 ## Installation
 
 * Make sure your device has an active internet connection.
