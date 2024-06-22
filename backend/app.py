@@ -50,7 +50,7 @@ def handle_send_data(data):
     results[0].show()
     results: list = results[0].summary()
     results: list[str] = set(
-        [result["name"] for result in results if result["confidence"] > 0.55]
+        [result["name"] for result in results if result["confidence"] > 0.25]
     )
     
     results = [
@@ -58,7 +58,7 @@ def handle_send_data(data):
             "name": result,
             "link": product_types.get(result, f"https://www.amazon.in/s?k={result}"),
         }
-        for result in results
+        for result in results if result != "person"
     ]
     print(results)
     
