@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
-import { ScrollShadow, Card, CardHeader, CardBody, Image, Link } from '@nextui-org/react';
+import { ScrollShadow, Card, CardHeader, CardBody, Image, Link, Spinner } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import { Maximize, PauseCircleIcon, PlayCircleIcon, UploadCloudIcon, VolumeIcon, VolumeXIcon } from 'lucide-react';
@@ -60,12 +60,9 @@ export default function VideoPlayer() {
     };
   }, []);
 
-  useEffect(() => {
-    socket.current?.on('data_processed' as any, (data: Item[]) => {
-      setItems(data);
-      console.log(data);
-    });
-  }, [items]);
+  socket.current?.on('data_processed' as any, (data: Item[]) => {
+    setItems(data);
+  });
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [played, setPlayed] = useState<boolean>(false);
@@ -183,25 +180,29 @@ export default function VideoPlayer() {
                   <div className='bg-gradient-to-r float-end w-1/5 from-black to-transparent absolute rounded-xl h-[92%]'>
                     <ScrollShadow className='h-full float-end pl-2 pt-2' hideScrollBar>
                       <h3 className='text-lg font-semibold'>Product Results</h3>
-                      {items &&
-                        items.map(item => (
-                          <Link key={item.name} target='_blank' href={item.link.url[0]} className='py-2 w-full'>
-                            <Card className='py-2 bg-white'>
-                              <CardHeader className='pb-0 pt-0 px-4 flex-col items-start'>
-                                <h4 className='font-bold text-large text-black'>{item.name}</h4>
-                              </CardHeader>
-                              <CardBody className='overflow-visible py-2'>
-                                <Image
-                                  alt='Card background'
-                                  className='object-cover rounded-xl'
-                                  src={item.link.images[0]}
-                                  width={270}
-                                  height={'150px'}
-                                />
-                              </CardBody>
-                            </Card>
-                          </Link>
-                        ))}
+                      {items ?
+                        items.length === 0 ?
+                          <h4 className='text-md'>No products found</h4>
+                        : items.map(item => (
+                            <Link key={item.name} target='_blank' href={item.link.url[0]} className='py-2 w-full'>
+                              <Card className='py-2 bg-white'>
+                                <CardHeader className='pb-0 pt-0 px-4 flex-col items-start'>
+                                  <h4 className='font-bold text-large text-black'>{item.name}</h4>
+                                </CardHeader>
+                                <CardBody className='overflow-visible py-2'>
+                                  <Image
+                                    alt='Card background'
+                                    className='object-cover rounded-xl'
+                                    src={item.link.images[0]}
+                                    width={270}
+                                    height={'150px'}
+                                  />
+                                </CardBody>
+                              </Card>
+                            </Link>
+                          ))
+
+                      : <Spinner className='w-10 h-10' />}
                     </ScrollShadow>
                   </div>
                 )}
