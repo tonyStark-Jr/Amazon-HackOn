@@ -5,7 +5,7 @@ import io, { Socket } from 'socket.io-client';
 import { ScrollShadow, Card, CardHeader, CardBody, Image, Link } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';
-import { Maximize, Minimize, PauseCircleIcon, PlayCircleIcon, UploadCloudIcon, VolumeXIcon } from 'lucide-react';
+import { Maximize, PauseCircleIcon, PlayCircleIcon, UploadCloudIcon, VolumeIcon, VolumeXIcon } from 'lucide-react';
 
 interface ClientToServerEvents {
   send_data: (data: { data: string }) => void;
@@ -61,7 +61,7 @@ export default function VideoPlayer() {
   }, []);
 
   useEffect(() => {
-    socket.current?.on('data_processed', (data: Item[]) => {
+    socket.current?.on('data_processed' as any, (data: Item[]) => {
       setItems(data);
       console.log(data);
     });
@@ -168,7 +168,7 @@ export default function VideoPlayer() {
                     onClick={toggleMuteUnmute}
                     className='absolute bottom-8 right-24 hover:bg-black hover:bg-opacity-50 rounded-full p-2 h-9 w-9 cursor-pointer'
                   />
-                : <VolumeXIcon
+                : <VolumeIcon
                     absoluteStrokeWidth
                     onClick={toggleMuteUnmute}
                     className='absolute bottom-8 right-24 hover:bg-black hover:bg-opacity-50 rounded-full p-2 h-9 w-9 cursor-pointer'

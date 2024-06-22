@@ -13,46 +13,45 @@ export default function StreamPage() {
   const uploadedAt = searchParams?.get('uploadedAt');
 
   const deleteVideo = async () => {
-    const res = await fetch('/api/delete', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url }),
-    });
-    if (res.ok) {
-      alert('Video deleted successfully');
-      window.location.href = '/';
-    } else {
-      alert('Failed to delete video');
+    if (url) {
+      const res = await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+      const processingURL = new URL(url);
+      const thumbnail = `https://${processingURL.hostname}/.thumbnail/${processingURL.pathname?.split('/')?.pop()?.split('.')?.at(-2)}.png`;
+
+      await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: thumbnail }),
+      });
+      if (res.ok) {
+        alert('Video deleted successfully');
+        window.location.href = '/';
+      } else {
+        alert('Failed to delete video');
+      }
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if ((url?.split('/')?.at(-2)?.split('.')?.length ?? 0) < 2) {
-        const res = fetch('/api/delete', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url }),
-        }).then((res) => {
-          if (res.ok) {
-            alert('Video deleted successfully');
-            window.location.href = '/';
-          } else {
-            alert('Failed to delete video');
-          }
-        });
-      }
-    };
-  }, [url]);
+  // useEffect(() => {
+  //   return () => {
+  //     console.log('Why it is running?');
+      
+  //     deleteVideo();
+  //   }
+  // }, []);
 
   return (
     <div className='flex align-middle flex-col'>
       <VideoPlayer />
-      {(url?.split('/')?.at(-2)?.split('.')?.length ?? 0) < 2 && (
+      {(url?.split('/')?.at(-2)?.split('.')?.length ?? 0) > 1 && (
         <Button className='self-end mr-16 w-1/12' variant='shadow' color='danger' onClick={deleteVideo}>
           Delete
         </Button>
