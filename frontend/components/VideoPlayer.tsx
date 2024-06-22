@@ -177,7 +177,7 @@ export default function VideoPlayer() {
                   className='absolute bottom-8 right-10 hover:bg-black hover:bg-opacity-50 rounded-full p-2 h-9 w-9 cursor-pointer'
                 />
                 {played && !isPlaying && (
-                  <div className='bg-gradient-to-r float-end w-1/5 from-black to-transparent absolute rounded-xl h-[92%]'>
+                  <div className='bg-gradient-to-r float-end w-1/5 from-black to-transparent absolute rounded-xl h-[92%] flex justify-start'>
                     <ScrollShadow className='h-full float-end pl-2 pt-2' hideScrollBar>
                       <h3 className='text-lg font-semibold'>Product Results</h3>
                       {items ?

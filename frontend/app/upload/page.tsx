@@ -6,13 +6,32 @@ import { upload } from '@vercel/blob/client';
 import { Loader2Icon, Play, UploadCloudIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { fetchFile } from '@ffmpeg/util';
 import Image from 'next/image';
 import { io } from 'socket.io-client';
 import { Item } from '@/components/VideoPlayer';
 
-const ffmpeg = new FFmpeg();
+function generateThumbnail(videoFile: File, seekTime = 0): Promise<Blob> {
+  return new Promise(resolve => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      video.currentTime = seekTime;
+    };
+    video.onseeked = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+        }, 'image/png');
+      }
+    };
+    video.src = URL.createObjectURL(videoFile);
+  });
+}
 
 export default function AvatarUploadPage() {
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -31,31 +50,27 @@ export default function AvatarUploadPage() {
     setIsUploading(true);
 
     if (!inputFileRef.current?.files) {
-      alert('No file selected');
-      return;
+      throw new Error('No file selected');
     }
 
     const file = inputFileRef.current.files[0];
-    if (file.type.split('/')[0] === 'video') {
-      await ffmpeg.load();
-      const newBlob = await upload(file.name, file, {
-        access: 'public',
-        handleUploadUrl: '/api/upload',
-        multipart: true,
-        contentType: file.type,
-      });
-      await ffmpeg.writeFile(file.name, await fetchFile(file));
-      const outputFilename = `${file.name.split('.')?.at(-2)}.png`;
-      await ffmpeg.exec(['-i', file.name, '-ss', `0`, '-frames:v', '1', outputFilename]);
-      const data = await ffmpeg.readFile(outputFilename);
+    const newBlob = await upload(file.name, file, {
+      access: 'public',
+      handleUploadUrl: '/api/upload',
+      multipart: true,
+      contentType: file.type,
+    });
 
-      const thumbnail = await upload(`.thumbnail/${outputFilename}`, (data as Uint8Array).buffer, {
+    if (file.type.split('/')[0] === 'video') {
+      const thumbnailBlob = await generateThumbnail(file);
+
+      const thumbnail = await upload(`.thumbnail/${file.name}.png`, thumbnailBlob, {
         access: 'public',
         handleUploadUrl: '/api/upload',
         multipart: true,
       });
+
       setBlob({ ...newBlob, thumbnail: thumbnail.url });
-      
     } else if (file.type.split('/')[0] === 'image') {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -67,7 +82,7 @@ export default function AvatarUploadPage() {
         const base64 = reader.result;
         socket?.emit('send_data', { data: base64 });
       };
-      
+
       socket?.on('data_processed', (data: Item[]) => {
         // UI need to be made for this
         console.log(data);
@@ -140,7 +155,10 @@ export default function AvatarUploadPage() {
                 size='lg'
                 type='submit'
               >
-                {isUploading ? 'Uploading...' : 'Upload'} {isUploading ? <Loader2Icon size={24} className='animate-spin'/> : <UploadCloudIcon size={24} />}
+                {isUploading ? 'Uploading...' : 'Upload'}{' '}
+                {isUploading ?
+                  <Loader2Icon size={24} className='animate-spin' />
+                : <UploadCloudIcon size={24} />}
               </Button>
             </form>
 
@@ -148,41 +166,46 @@ export default function AvatarUploadPage() {
 
             {blob && (
               <Link
-              href={{
-                pathname: '/stream',
-                query: {
-                  url: blob?.url,
-                  pathname: blob?.pathname,
-                  size: 'NA',
-                  uploadedAt: 'Now',
-                },
-              }}
-            >
-              <Card
-                key={blob?.pathname}
-                isHoverable
-                isPressable
-                radius='lg'
-                className='border-none w-52 justify-center bg-cyan-600 hover:scale-110'
+                href={{
+                  pathname: '/stream',
+                  query: {
+                    url: blob?.url,
+                    pathname: blob?.pathname,
+                    size: 'NA',
+                    uploadedAt: 'Now',
+                  },
+                }}
               >
-                <div className='relative'>
-                  <Image
-                    // loading='lazy'
-                    alt={blob?.pathname ?? 'Video'}
-                    className='object-cover'
-                    height={500}
-                    src={blob?.thumbnail ?? 'https://d8it4huxumps7.cloudfront.net/uploads/images/663c619d69486_hackon-with-amazon-season-4.jpg?d=1920x1920'}
-                    width={500}
-                  />
-                  <div className='absolute inset-0 flex z-10 items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity'>
-                    <Play size={48} color='white' />
+                <Card
+                  key={blob?.pathname}
+                  isHoverable
+                  isPressable
+                  radius='lg'
+                  className='border-none w-52 justify-center bg-cyan-600 hover:scale-110'
+                >
+                  <div className='relative'>
+                    <Image
+                      // loading='lazy'
+                      alt={blob?.pathname ?? 'Video'}
+                      className='object-cover'
+                      height={500}
+                      src={
+                        blob?.thumbnail ??
+                        'https://d8it4huxumps7.cloudfront.net/uploads/images/663c619d69486_hackon-with-amazon-season-4.jpg?d=1920x1920'
+                      }
+                      width={500}
+                    />
+                    <div className='absolute inset-0 flex z-10 items-center justify-center rounded-xl bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity'>
+                      <Play size={48} color='white' />
+                    </div>
                   </div>
-                </div>
-                <CardFooter className='justify-between'>
-                  <p className='text-small text-white text-wrap'>{blob?.pathname.split('/').pop()?.split('.')?.at(-2)}</p>
-                </CardFooter>
-              </Card>
-            </Link>
+                  <CardFooter className='justify-between'>
+                    <p className='text-small text-white text-wrap'>
+                      {blob?.pathname.split('/').pop()?.split('.')?.at(-2)}
+                    </p>
+                  </CardFooter>
+                </Card>
+              </Link>
             )}
           </div>
         </main>
