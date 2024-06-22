@@ -1,4 +1,30 @@
 # Amazon-HackOn
+
+## Team Name: **random_gigabytes**
+
+## Team Members:
+1. Bhupesh Dewangan - [bhupesh98](https://github.com/bhupesh98)
+2. Debjyoti Ray - [DebjyotiRay](https://github.com/DebjyotiRay)
+3. Harshal Gainer - [Harshal5167](https://github.com/Harshal5167)
+4. Prakhar Shukla - [tonyStark-Jr](https://github.com/tonyStark-Jr)
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+  - [Usage of Devit model](#usage-of-devit-model)
+    - [Training](#training)
+    - [Evaluation](#evaluation)
+    - [RPN Training (COCO)](#rpn-training-coco)
+  - [Usage of Devit model](#usage-of-devit-model)
+    - [Training](#training)
+    - [Evaluation](#evaluation)
+    - [RPN Training (COCO)](#rpn-training-coco)
+    - [References](#references)
+
 # Introduction
 
 Detecting products from Amazon displayed in movies or series on Prime Video presents a unique challenge for traditional object detection models. With the vast number of products available on Amazon, it's impractical to gather sufficient training samples for each class. Traditional models require extensive labeled datasets to perform accurately, making them unsuitable for this task due to the sheer volume and diversity of products.
@@ -150,3 +176,8 @@ bash scripts/train_rpn.sh  ARG
 ```
 
 Check [Tools.md](model/main-model/Tools.md) for intructions to build prototype and prepare weights.
+
+### References
+
+- [DEtection Vision Transformer (DeVIT)](https://arxiv.org/pdf/2309.12969v3)
+- [DeVIT Model Repository](https://github.com/mlzxy/devit)
