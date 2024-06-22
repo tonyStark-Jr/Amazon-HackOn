@@ -16,7 +16,6 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
 model = YOLO("yolov8n.pt")
 
 @app.route("/")
@@ -46,10 +45,11 @@ def handle_send_data(data):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     img = torch.from_numpy(img).permute(2, 0, 1).float().div(255.0).unsqueeze(0)
-
-    results = model("static/test1.jpg")  # You might want to change this to use img
-    
-    result_set = set(
+    results = model.predict(img)
+    # results = model("static/test1.jpg")
+    results[0].show()
+    results: list = results[0].summary()
+    results: list[str] = set(
         [result["name"] for result in results if result["confidence"] > 0.55]
     )
     
@@ -58,7 +58,7 @@ def handle_send_data(data):
             "name": result,
             "link": product_types.get(result, f"https://www.amazon.in/s?k={result}"),
         }
-        for result in result_set
+        for result in results
     ]
     print(results)
     
