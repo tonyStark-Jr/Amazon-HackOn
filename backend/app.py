@@ -16,7 +16,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-model = YOLO("yolov8n.pt")
+model = YOLO("model.pt")
 
 @app.route("/")
 def hello_world() -> str:
