@@ -1,20 +1,52 @@
 'use client';
 
-import React, { Suspense } from 'react';
 import VideoPlayer from '@/components/VideoPlayer';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinner } from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
-function StreamPageContent() {
-  const searchParams = useSearchParams();
-  const url = searchParams.get('url');
-  const pathname = searchParams.get('pathname');
-  const size = searchParams?.get('size');
-  const uploadedAt = searchParams?.get('uploadedAt');
+export default function StreamPage({ searchParams}: { searchParams: Record<string, string | string[] | undefined> }) {
+  const url = searchParams.url;
+  const pathname = searchParams.pathname;
+  const size = searchParams?.size;
+  const uploadedAt = searchParams?.uploadedAt;
+
+  const deleteVideo = async () => {
+    if (url) {
+      const res = await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+      const processingURL = new URL(url as string);
+      const thumbnail = `https://${processingURL.hostname}/.thumbnail/${processingURL.pathname?.split('/')?.pop()?.split('.')?.at(-2)}.png`;
+
+      await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: thumbnail }),
+      });
+      if (res.ok) {
+        alert('Video deleted successfully');
+        window.location.href = '/';
+      } else {
+        alert('Failed to delete video');
+      }
+    }
+  };
 
   return (
     <div className='flex align-middle flex-col'>
       <VideoPlayer />
+      {((url as string)?.split('/')?.at(-2)?.split('.')?.length ?? 0) > 1 && (
+        <Button className='self-end mr-16 w-1/12' variant='shadow' color='danger' onClick={deleteVideo}>
+          Delete
+        </Button>
+      )}
       <div className='mt-4 ml-10 w-11/12 justify-center mb-4'>
         <Table aria-label='Example static collection table'>
           <TableHeader>
@@ -42,19 +74,5 @@ function StreamPageContent() {
         </Table>
       </div>
     </div>
-  );
-}
-
-export default function StreamPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className='flex items-center justify-center h-full w-full'>
-          <Spinner size='lg' />
-        </div>
-      }
-    >
-      <StreamPageContent />
-    </Suspense>
   );
 }
