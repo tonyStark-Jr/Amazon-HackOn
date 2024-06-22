@@ -37,7 +37,6 @@ Our approach involves creating a diverse and robust dataset by integrating real-
 
 A sophisticated enhancement of Amazon Prime Video's X-ray feature that transforms your shopping experience. It leverages advanced Meta Learning based object detection algorithms to seamlessly identify and recommend products from your favorite video content. By addressing the challenges of Amazon's vast and dynamic product catalog and the limitations of traditional recognition methods, It bridges the gap between engaging visual content and effortless product accessibility, offering you a more immersive and personalized shopping journey.
 
-We know that te
 ## Features
 
 - **Advanced Item Recognition Accuracy**: Leverages the YOLO model to accurately identify items from multimedia content, using Amazon's vast product image database for enhanced model training and validation. Continuous learning methodologies ensure the system adapts quickly to new data, maintaining high accuracy without extensive retraining.
