@@ -63,8 +63,7 @@ export default function AvatarUploadPage() {
 
     if (file.type.split('/')[0] === 'video') {
       const thumbnailBlob = await generateThumbnail(file);
-
-      const thumbnail = await upload(`.thumbnail/${file.name}.png`, thumbnailBlob, {
+      const thumbnail = await upload(`.thumbnail/${file.name.split('.')?.at(-2)}.png`, thumbnailBlob, {
         access: 'public',
         handleUploadUrl: '/api/upload',
         multipart: true,

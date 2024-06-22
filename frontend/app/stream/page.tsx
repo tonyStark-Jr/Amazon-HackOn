@@ -5,12 +5,11 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function StreamPage() {
-  const searchParams = useSearchParams();
-  const url = searchParams.get('url');
-  const pathname = searchParams.get('pathname');
-  const size = searchParams?.get('size');
-  const uploadedAt = searchParams?.get('uploadedAt');
+export default function StreamPage({ searchParams}: { searchParams: Record<string, string | string[] | undefined> }) {
+  const url = searchParams.url;
+  const pathname = searchParams.pathname;
+  const size = searchParams?.size;
+  const uploadedAt = searchParams?.uploadedAt;
 
   const deleteVideo = async () => {
     if (url) {
@@ -21,7 +20,7 @@ export default function StreamPage() {
         },
         body: JSON.stringify({ url }),
       });
-      const processingURL = new URL(url);
+      const processingURL = new URL(url as string);
       const thumbnail = `https://${processingURL.hostname}/.thumbnail/${processingURL.pathname?.split('/')?.pop()?.split('.')?.at(-2)}.png`;
 
       await fetch('/api/delete', {
@@ -40,18 +39,10 @@ export default function StreamPage() {
     }
   };
 
-  // useEffect(() => {
-  //   return () => {
-  //     console.log('Why it is running?');
-      
-  //     deleteVideo();
-  //   }
-  // }, []);
-
   return (
     <div className='flex align-middle flex-col'>
       <VideoPlayer />
-      {(url?.split('/')?.at(-2)?.split('.')?.length ?? 0) > 1 && (
+      {((url as string)?.split('/')?.at(-2)?.split('.')?.length ?? 0) > 1 && (
         <Button className='self-end mr-16 w-1/12' variant='shadow' color='danger' onClick={deleteVideo}>
           Delete
         </Button>

@@ -33,8 +33,6 @@ def handle_disconnect():
 
 @socketio.on("send_data")
 def handle_send_data(data):
-    print(f"Received data from client")
-    
     image_data = data["data"].split(",")[1]
     decoded_data = base64.b64decode(image_data)
 
@@ -46,8 +44,7 @@ def handle_send_data(data):
     
     img = torch.from_numpy(img).permute(2, 0, 1).float().div(255.0).unsqueeze(0)
     results = model.predict(img)
-    # results = model("static/test1.jpg")
-    results[0].show()
+
     results: list = results[0].summary()
     results: list[str] = set(
         [result["name"] for result in results if result["confidence"] > 0.25]
@@ -60,8 +57,7 @@ def handle_send_data(data):
         }
         for result in results if result != "person"
     ]
-    print(results)
-    
+
     emit("data_processed", results)
 
 if __name__ == "__main__":
