@@ -1,6 +1,6 @@
 # Amazon-HackOn
 
-A sophisticated enhancement of Amazon Prime Video's X-ray feature that transforms your shopping experience. It leverages advanced Meta Learning and Deep Learning algorithms to seamlessly identify and recommend products from your favorite video content. By addressing the challenges of Amazon's vast and dynamic product catalog and the limitations of traditional recognition methods, It bridges the gap between engaging visual content and effortless product accessibility, offering you a more immersive and personalized shopping journey.
+A sophisticated enhancement of Amazon Prime Video's X-ray feature that transforms your shopping experience. It leverages advanced Meta Learning based object detection algorithms to seamlessly identify and recommend products from your favorite video content. By addressing the challenges of Amazon's vast and dynamic product catalog and the limitations of traditional recognition methods, It bridges the gap between engaging visual content and effortless product accessibility, offering you a more immersive and personalized shopping journey.
 
 ## Features
 
