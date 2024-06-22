@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { ScrollShadow, Card, CardHeader, CardBody, Image, Link } from '@nextui-org/react';
-import items from '@/data/items.json';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import { Maximize, Minimize, PauseCircleIcon, PlayCircleIcon, UploadCloudIcon, VolumeXIcon } from 'lucide-react';
@@ -12,10 +11,18 @@ interface ClientToServerEvents {
   send_data: (data: { data: string }) => void;
 }
 
+export type Item = {
+  name: string;
+  link: {
+    url: string[];
+    images: string[];
+  };
+};
+
 export default function VideoPlayer() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const socket = useRef<Socket<ClientToServerEvents> | null>(null);
-  // const [items, setItems] = useState(null);
+  const [items, setItems] = useState<Item[] | null>(null);
 
   const searchParams = useSearchParams();
   let url = searchParams.get('url');
@@ -48,14 +55,17 @@ export default function VideoPlayer() {
       console.log('Disconnected from server');
     });
 
-    // socket.current?.on('data_processed', (data) => {
-    //   setItems(data);
-    // });
-
     return () => {
       socket.current?.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    socket.current?.on('data_processed', (data: Item[]) => {
+      setItems(data);
+      console.log(data);
+    });
+  }, [items]);
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [played, setPlayed] = useState<boolean>(false);
@@ -139,7 +149,7 @@ export default function VideoPlayer() {
               <div
                 className={`hover:opacity-100 transition-opacity duration-750 ${isPlaying ? 'opacity-0' : 'opacity-100'} h-full w-full`}
               >
-                <h2 className='font-bold text-lg pl-4 pt-4'>{url.split('/').pop()?.split('-')?.[0]}</h2>
+                <h2 className='font-bold text-xl pl-4 pt-4'>{url.split('/').pop()?.split('-')?.at(-2)}</h2>
                 {isPlaying ?
                   <PauseCircleIcon
                     absoluteStrokeWidth
@@ -170,12 +180,12 @@ export default function VideoPlayer() {
                   className='absolute bottom-8 right-10 hover:bg-black hover:bg-opacity-50 rounded-full p-2 h-9 w-9 cursor-pointer'
                 />
                 {played && !isPlaying && (
-                  <div className='bg-gradient-to-r float-end w-1/5 from-black to-transparent absolute rounded-xl h-full'>
+                  <div className='bg-gradient-to-r float-end w-1/5 from-black to-transparent absolute rounded-xl h-[92%]'>
                     <ScrollShadow className='h-full float-end pl-2 pt-2' hideScrollBar>
-                      <h2 className='text-xl font-bold'>Product Results</h2>
-                      {items ?
-                        items.map((item, index) => (
-                          <Link key={index} href={item.purchase_link} className='py-2 w-full'>
+                      <h3 className='text-lg font-semibold'>Product Results</h3>
+                      {items &&
+                        items.map(item => (
+                          <Link key={item.name} target='_blank' href={item.link.url[0]} className='py-2 w-full'>
                             <Card className='py-2 bg-white'>
                               <CardHeader className='pb-0 pt-0 px-4 flex-col items-start'>
                                 <h4 className='font-bold text-large text-black'>{item.name}</h4>
@@ -184,14 +194,14 @@ export default function VideoPlayer() {
                                 <Image
                                   alt='Card background'
                                   className='object-cover rounded-xl'
-                                  src={item.image_link}
+                                  src={item.link.images[0]}
                                   width={270}
+                                  height={'150px'}
                                 />
                               </CardBody>
                             </Card>
                           </Link>
-                        ))
-                      : <p>No items found</p>}
+                        ))}
                     </ScrollShadow>
                   </div>
                 )}
@@ -210,7 +220,7 @@ export default function VideoPlayer() {
               crossOrigin='anonymous'
               ref={videoRef}
               autoFocus
-              // onPause={frameSend}
+              onPause={frameSend}
               className='w-full h-[90%] object-cover rounded-xl'
             >
               <source src={url} type={`video/${url.split('.').pop()}`} />

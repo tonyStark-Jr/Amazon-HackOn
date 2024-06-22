@@ -1,8 +1,9 @@
 'use client';
 
 import VideoPlayer from '@/components/VideoPlayer';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function StreamPage() {
   const searchParams = useSearchParams();
@@ -11,9 +12,51 @@ export default function StreamPage() {
   const size = searchParams?.get('size');
   const uploadedAt = searchParams?.get('uploadedAt');
 
+  const deleteVideo = async () => {
+    const res = await fetch('/api/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+    if (res.ok) {
+      alert('Video deleted successfully');
+      window.location.href = '/';
+    } else {
+      alert('Failed to delete video');
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if ((url?.split('/')?.at(-2)?.split('.')?.length ?? 0) < 2) {
+        const res = fetch('/api/delete', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        }).then((res) => {
+          if (res.ok) {
+            alert('Video deleted successfully');
+            window.location.href = '/';
+          } else {
+            alert('Failed to delete video');
+          }
+        });
+      }
+    };
+  }, [url]);
+
   return (
     <div className='flex align-middle flex-col'>
       <VideoPlayer />
+      {(url?.split('/')?.at(-2)?.split('.')?.length ?? 0) < 2 && (
+        <Button className='self-end mr-16 w-1/12' variant='shadow' color='danger' onClick={deleteVideo}>
+          Delete
+        </Button>
+      )}
       <div className='mt-4 ml-10 w-11/12 justify-center mb-4'>
         <Table aria-label='Example static collection table'>
           <TableHeader>
