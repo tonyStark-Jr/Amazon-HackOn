@@ -118,18 +118,13 @@ export default function AvatarUploadPage() {
         <main className='relative p-12 flex flex-col justify-between h-4/5 z-10'>
           <div>
             <h1 className='text-4xl font-bold'>Upload Videos your own videos</h1>
-            <p className='w-3/5 my-6'>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release
-              of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-              like Aldus PageMaker including versions of Lorem Ipsum
-            </p>
-            <p className='w-3/5 my-4'>
-              using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using
-              Content here, content here, making it look like readable English. Many desktop publishing packages and web
-              page editors now use Lorem Ip
+            <p className='w-1/2 my-6 text-lg' >
+              Welcome to Prime Video upload feature, where you can seamlessly upload your videos and leverage
+              cutting-edge machine learning technology to detect objects within them. Whether youre showcasing your
+              latest project or sharing memorable moments, our platform ensures a streamlined experience. Simply select
+              your video file, upload it securely, and our advanced ML algorithms will analyze its contents to identify
+              objects of interest. Explore the possibilities of intelligent video processing today, backed by the
+              reliability and innovation of Prime Video.
             </p>
           </div>
           <div className='flex justify-around'>
