@@ -1,7 +1,17 @@
 # Amazon-HackOn
+# Introduction
+
+Detecting products from Amazon displayed in movies or series on Prime Video presents a unique challenge for traditional object detection models. With the vast number of products available on Amazon, it's impractical to gather sufficient training samples for each class. Traditional models require extensive labeled datasets to perform accurately, making them unsuitable for this task due to the sheer volume and diversity of products.
+
+To address this challenge, we leverage few-shot object detection techniques, specifically using the DEtection Vision Transformer (DeVIT). Few-shot object detection models are designed to perform well with only a few annotated examples per class, making them ideal for scenarios where extensive labeled data is not available.
+
+DeVIT, a state-of-the-art few-shot object detection model, excels in adapting to new classes with minimal data. You can learn more about DeVIT from its [research paper](https://arxiv.org/pdf/2309.12969v3) and access the model repository [here](https://github.com/mlzxy/devit).
+
+Our approach involves creating a diverse and robust dataset by integrating real-world scenes from the web series *Panchayat* with objects from the Amazon Berkeley dataset. This strategy ensures our model learns to detect objects accurately across various contexts, enabling efficient identification of Amazon products in Prime Video content.
 
 A sophisticated enhancement of Amazon Prime Video's X-ray feature that transforms your shopping experience. It leverages advanced Meta Learning based object detection algorithms to seamlessly identify and recommend products from your favorite video content. By addressing the challenges of Amazon's vast and dynamic product catalog and the limitations of traditional recognition methods, It bridges the gap between engaging visual content and effortless product accessibility, offering you a more immersive and personalized shopping journey.
 
+We know that te
 ## Features
 
 - **Advanced Item Recognition Accuracy**: Leverages the YOLO model to accurately identify items from multimedia content, using Amazon's vast product image database for enhanced model training and validation. Continuous learning methodologies ensure the system adapts quickly to new data, maintaining high accuracy without extensive retraining.
