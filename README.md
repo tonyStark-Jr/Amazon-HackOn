@@ -102,4 +102,4 @@ bash scripts/train_rpn.sh  ARG
 # corresponds to open-vocabulary / one-shot splits 1-4 / few-shot
 ```
 
-Check [Tools.md](Tools.md) for intructions to build prototype and prepare weights.
+Check [Tools.md](model/main-model/Tools.md) for intructions to build prototype and prepare weights.
